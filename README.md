@@ -15,10 +15,7 @@ This is a test task that I received from the company I wanted to get into. The p
 
 ## Screenshots
 
-<img src="E:\AndroidStudioProjects\NatifeTest\screenshots\Screenshot_20230201_155631.png"/>
-<img src="E:\AndroidStudioProjects\NatifeTest\screenshots\Screenshot_20230201_155654.png"/>
-<img src="E:\AndroidStudioProjects\NatifeTest\screenshots\Screenshot_20230201_155722.png"/>
-<img src="E:\AndroidStudioProjects\NatifeTest\screenshots\Screenshot_20230201_155143.png"/>
-
-
-
+![Alt text](screenshots/Screenshot_20230201_155631.png)
+![Alt text](screenshots/Screenshot_20230201_155654.png)
+![Alt text](screenshots/Screenshot_20230201_155722.png)
+![Alt text](screenshots/Screenshot_20230201_155143.png)
