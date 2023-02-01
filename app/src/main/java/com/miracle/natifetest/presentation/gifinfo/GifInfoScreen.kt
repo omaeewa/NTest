@@ -1,6 +1,5 @@
 package com.miracle.natifetest.presentation.gifinfo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -12,7 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -28,7 +29,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun GifInfoScreen(
     vm: HomeViewModel = hiltViewModel(),
-    gifIndex: Int, navigateBack: () -> Unit
+    gifIndex: Int,
+    navigateBack: () -> Unit
 ) {
     val uiState by vm.uiState.collectAsState()
     val gifs = uiState.gifUrls
@@ -68,7 +70,7 @@ fun GifInfoScreen(
                         .align(Alignment.Center),
                     contentScale = ContentScale.FillWidth
                 ) { builder ->
-                    builder.placeholder(context.resources.getDrawable(R.drawable.ic_gif))
+                    builder.placeholder(ContextCompat.getDrawable(context, R.drawable.ic_gif))
                 }
 
                 Button(
@@ -81,7 +83,7 @@ fun GifInfoScreen(
                     colors = ButtonDefaults.buttonColors(backgroundColor = DarkBlue),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text(text = "Don't show it again", color = Color.White)
+                    Text(text = stringResource(id = R.string.dont_show_it), color = Color.White)
                 }
             }
         }

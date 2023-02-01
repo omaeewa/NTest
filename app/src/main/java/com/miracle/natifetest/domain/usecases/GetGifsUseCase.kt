@@ -9,7 +9,7 @@ class GetGifsUseCase @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository
 ) {
     suspend operator fun invoke(searchString: String, limit: Int, offset: Int): List<String> {
-        val blockedGifs = sharedPreferencesRepository.getBlockedGifs()
+        val blockedGifs = sharedPreferencesRepository.getDisabledGifs()
         return gifsRepository.getGifs(searchString, limit, offset)
             .filter { !blockedGifs.contains(it) }
     }

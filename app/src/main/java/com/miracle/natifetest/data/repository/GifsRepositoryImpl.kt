@@ -1,6 +1,5 @@
 package com.miracle.natifetest.data.repository
 
-import com.miracle.natifetest.data.service.API_KEY
 import com.miracle.natifetest.data.service.GiphyService
 import com.miracle.natifetest.domain.repository.GifsRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,6 +13,6 @@ class GifsRepositoryImpl @Inject constructor(
 ) : GifsRepository {
 
     override suspend fun getGifs(searchString: String, limit: Int, offset: Int) = withContext(dispatcherIo) {
-        giphyService.getPosts(API_KEY, searchString, limit, offset).data.map { it.images.fixed_height.url }
+        giphyService.getPosts(searchString, limit, offset).data.map { it.images.fixed_height.url }
     }
 }

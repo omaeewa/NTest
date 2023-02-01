@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">NatifeTest</string>
+    <string name="search_hint">Write the name of the gif you want to see</string>
+    <string name="text_input_hint">Search gifs…</string>
+    <string name="dont_show_it">Don\'t show it again</string>
+
 </resources>

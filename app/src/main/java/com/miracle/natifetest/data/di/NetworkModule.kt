@@ -1,8 +1,6 @@
 package com.miracle.natifetest.data.di
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import com.miracle.natifetest.data.hasNetwork
 import com.miracle.natifetest.data.service.GiphyService
 import com.squareup.moshi.Moshi
@@ -22,7 +20,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "https://api.giphy.com/"
+    private const val BASE_URL = "https://api.giphy.com/v1/gifs/"
 
     @Singleton
     @Provides
@@ -31,7 +29,7 @@ object NetworkModule {
             .add(KotlinJsonAdapterFactory())
             .build()
 
-        val cacheSize = (5 * 1024 * 1024).toLong()//5MB
+        val cacheSize = (50 * 1024 * 1024).toLong()//50MB
         val myCache = Cache(context.cacheDir, cacheSize)
         val okHttpClient = OkHttpClient.Builder()
             .cache(myCache)
@@ -44,9 +42,19 @@ object NetworkModule {
                         "Cache-Control",
                         "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7//7DAYS
                     ).build()
+
+
+                val originalHttpUrl = request.url()
+                val url = originalHttpUrl.newBuilder()
+                    .addQueryParameter("api_key", "A761SXcIMG6dNyg1gCnC1BUOC8m1wruR")
+                    .build()
+                request = request.newBuilder().url(url).build()
+
                 chain.proceed(request)
+
             }
             .build()
+
 
         val retrofit = Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))

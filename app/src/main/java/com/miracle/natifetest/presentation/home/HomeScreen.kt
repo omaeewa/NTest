@@ -1,16 +1,13 @@
 package com.miracle.natifetest.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -20,12 +17,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miracle.natifetest.presentation.common.composable.SearchEditText
@@ -51,22 +51,24 @@ fun HomeScreen(
             Box(Modifier.weight(1f)) {
                 SearchEditText(
                     word = uiState.searchString,
+                    isLoading = uiState.loading,
                     onValueChange = vm::onSearchStringUpdate
                 )
             }
-            IconButton(
-                onClick = vm::updateListViewType,
-                modifier = Modifier.padding(end = 10.dp)
-            ) {
-                val icon = when (uiState.listViewType) {
-                    ListViewType.Table -> R.drawable.ic_table_rows
-                    ListViewType.Column -> R.drawable.ic_table_chart
+            if (uiState.gifUrls.isNotEmpty())
+                IconButton(
+                    onClick = vm::updateListViewType,
+                    modifier = Modifier.padding(end = 10.dp)
+                ) {
+                    val icon = when (uiState.listViewType) {
+                        ListViewType.Table -> R.drawable.ic_table_rows
+                        ListViewType.Column -> R.drawable.ic_table_chart
+                    }
+                    Icon(
+                        painter = painterResource(id = icon),
+                        contentDescription = null
+                    )
                 }
-                Icon(
-                    painter = painterResource(id = icon),
-                    contentDescription = null
-                )
-            }
         }
 
         when (uiState.listViewType) {
@@ -77,7 +79,7 @@ fun HomeScreen(
                     columns = GridCells.Fixed(3),
                 ) {
                     items(uiState.gifUrls.size) {
-                        if (it == uiState.gifUrls.size - 1) vm.fetchGifs()
+                        if (it == uiState.gifUrls.size - 10) vm.loadMoreGifs()
 
                         GlideImage(
                             model = uiState.gifUrls[it],
@@ -92,9 +94,17 @@ fun HomeScreen(
                                 },
                             contentScale = ContentScale.Crop
                         ) { builder ->
-                            builder.placeholder(context.resources.getDrawable(R.drawable.ic_gif))
+
+                            builder.placeholder(
+                                ContextCompat.getDrawable(
+                                    context,
+                                    R.drawable.ic_gif
+                                )
+                            )
                         }
+
                     }
+
 
                 }
             }
@@ -114,36 +124,41 @@ fun HomeScreen(
                                 .clickable { navigateToGifInfo(it) },
                             contentScale = ContentScale.FillWidth
                         ) { builder ->
-                            builder.placeholder(context.resources.getDrawable(R.drawable.ic_gif))
+                            builder.placeholder(
+                                ContextCompat.getDrawable(
+                                    context,
+                                    R.drawable.ic_gif
+                                )
+                            )
                         }
                     }
                 }
             }
         }
 
-        if (uiState.gifUrls.isEmpty() && !uiState.loading) Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_notes),
-                    contentDescription = null,
-                    Modifier.size(250.dp)
-                )
-                Text(text = "Write the name of the gif in the search bar", color = Color.White)
-            }
-
-        }
-
-        if (uiState.loading) {
+        if (uiState.gifUrls.isEmpty() && !uiState.loading)
             Box(
-                Modifier.fillMaxSize(),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 30.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.White)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = null,
+                        Modifier.size(180.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.search_hint),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
+
             }
-        }
     }
 }
 

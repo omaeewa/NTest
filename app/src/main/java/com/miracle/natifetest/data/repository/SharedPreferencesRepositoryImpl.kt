@@ -8,7 +8,7 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     private val sharedPref: SharedPreferences,
     ): SharedPreferencesRepository {
 
-    override fun addBlockedGif(gifUrl: String) {
+    override fun addDisabledGif(gifUrl: String) {
         val blockedStrings = sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toMutableSet()
         blockedStrings.add(gifUrl)
 
@@ -18,7 +18,8 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getBlockedGifs(): List<String> = sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toList()
+    override fun getDisabledGifs(): List<String> = sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toList()
 
-    private val BLOCKED_GIFS = "blocked_gifs"
 }
+
+const val BLOCKED_GIFS = "blocked_gifs"
