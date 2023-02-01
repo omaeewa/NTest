@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miracle.natifetest.R
-import com.miracle.natifetest.presentation.theme.DarkBlue
+import com.miracle.natifetest.presentation.DarkBlue
 
 @Composable
 fun SearchEditText(word: String, isLoading: Boolean, onValueChange: (w: String) -> Unit) {

@@ -1,4 +1,4 @@
-package com.miracle.natifetest.presentation.home
+package com.miracle.natifetest.presentation.screens.home
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

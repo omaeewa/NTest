@@ -15,10 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.miracle.natifetest.presentation.gifinfo.GifInfoScreen
-import com.miracle.natifetest.presentation.home.HomeScreen
-import com.miracle.natifetest.presentation.home.HomeViewModel
-import com.miracle.natifetest.presentation.theme.NatifeTestTheme
+import com.miracle.natifetest.presentation.screens.gifinfo.GifInfoScreen
+import com.miracle.natifetest.presentation.screens.home.HomeScreen
+import com.miracle.natifetest.presentation.screens.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

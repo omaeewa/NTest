@@ -1,9 +1,9 @@
-package com.miracle.natifetest.presentation.home
+package com.miracle.natifetest.presentation.screens.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.miracle.natifetest.domain.usecases.BlockGifUseCase
+import com.miracle.natifetest.domain.usecases.HideGifUseCase
 import com.miracle.natifetest.domain.usecases.GetGifsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -25,7 +25,7 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getGifsUseCase: GetGifsUseCase,
-    private val blockGifUseCase: BlockGifUseCase
+    private val hideGifUseCase: HideGifUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -82,7 +82,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun blockGif(gifUrl: String) {
-        blockGifUseCase(gifUrl)
+        hideGifUseCase(gifUrl)
         _uiState.update { it.copy(gifUrls = it.gifUrls.toMutableList().apply { remove(gifUrl) }) }
     }
 

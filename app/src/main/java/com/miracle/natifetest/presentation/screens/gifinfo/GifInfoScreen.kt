@@ -1,4 +1,4 @@
-package com.miracle.natifetest.presentation.gifinfo
+package com.miracle.natifetest.presentation.screens.gifinfo
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,11 +21,11 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.miracle.natifetest.R
-import com.miracle.natifetest.presentation.home.HomeViewModel
-import com.miracle.natifetest.presentation.theme.DarkBlue
+import com.miracle.natifetest.presentation.screens.home.HomeViewModel
+import com.miracle.natifetest.presentation.DarkBlue
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun GifInfoScreen(
     vm: HomeViewModel = hiltViewModel(),
@@ -75,7 +75,6 @@ fun GifInfoScreen(
 
                 Button(
                     onClick = {
-                        navigateBack()
                         vm.blockGif(gifs[it])
                     }, modifier = Modifier
                         .padding(20.dp)

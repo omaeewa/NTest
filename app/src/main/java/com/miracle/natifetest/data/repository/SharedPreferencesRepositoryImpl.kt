@@ -6,19 +6,16 @@ import javax.inject.Inject
 
 class SharedPreferencesRepositoryImpl @Inject constructor(
     private val sharedPref: SharedPreferences,
-    ): SharedPreferencesRepository {
+) : SharedPreferencesRepository {
 
-    override fun addDisabledGif(gifUrl: String) {
-        val blockedStrings = sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toMutableSet()
-        blockedStrings.add(gifUrl)
-
-        with(sharedPref.edit()) {
-            putStringSet(BLOCKED_GIFS, blockedStrings)
-            apply()
-        }
+    override fun addDisabledGif(gifUrl: String) = with(sharedPref.edit()) {
+        putStringSet(BLOCKED_GIFS, getDisabledGifs().toMutableSet() + gifUrl)
+        apply()
     }
 
-    override fun getDisabledGifs(): List<String> = sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toList()
+
+    override fun getDisabledGifs(): List<String> =
+        sharedPref.getStringSet(BLOCKED_GIFS, emptySet())!!.toList()
 
 }
 
