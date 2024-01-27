@@ -1,5 +1,6 @@
 package com.miracle.natifetest.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,9 +9,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,11 +35,16 @@ import com.miracle.natifetest.R
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeScreen(
-    vm: HomeViewModel = hiltViewModel(),
     navigateToGifInfo: (gifIndex: Int) -> Unit
 ) {
+    val vm: HomeViewModel = hiltViewModel()
     val uiState by vm.uiState.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(uiState) {
+        Log.d("kek", "HomeScreen: ${uiState.gifUrls.size}")
+        Log.d("kek", "HomeScreen: ${vm.hashCode()}")
+    }
 
     Column {
         Row(

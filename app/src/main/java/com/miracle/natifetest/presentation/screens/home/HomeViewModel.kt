@@ -1,15 +1,25 @@
 package com.miracle.natifetest.presentation.screens.home
 
 import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.miracle.natifetest.domain.usecases.HideGifUseCase
-import com.miracle.natifetest.domain.usecases.GetGifsUseCase
+import com.miracle.natifetest.domain.repository.UserDataRepository
+import com.miracle.natifetest.domain.usecases.GifSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +34,8 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getGifsUseCase: GetGifsUseCase,
-    private val hideGifUseCase: HideGifUseCase
+    private val gifSearchUseCase: GifSearchUseCase,
+    private val userDataRepository: UserDataRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -45,7 +55,7 @@ class HomeViewModel @Inject constructor(
             delay(300)
             try {
                 updateLoadingState(true)
-                val receivedGifs = getGifsUseCase(_uiState.value.searchString, LIMIT_GIFS, offset)
+                val receivedGifs = gifSearchUseCase(_uiState.value.searchString, LIMIT_GIFS, offset).getOrThrow()
                 _uiState.update { it.copy(gifUrls = receivedGifs) }
             } catch (e: Exception) {
                 //Handle exception
@@ -53,21 +63,21 @@ class HomeViewModel @Inject constructor(
             } finally {
                 updateLoadingState(false)
                 Log.d("kek", "size -> $offset")
-
             }
         }
     }
 
-    fun loadMoreGifs(){
+    fun loadMoreGifs() {
         viewModelScope.launch {
             try {
-                val receivedGifs = getGifsUseCase(_uiState.value.searchString, LIMIT_GIFS, offset)
+                val receivedGifs = gifSearchUseCase(_uiState.value.searchString, LIMIT_GIFS, offset).getOrThrow()
                 _uiState.update { it.copy(gifUrls = it.gifUrls + receivedGifs) }
             } catch (e: Exception) {
                 //Handle exception
                 Log.d("kek", e.message.toString())
             }
         }
+
     }
 
 
@@ -82,12 +92,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun blockGif(gifUrl: String) {
-        hideGifUseCase(gifUrl)
+        viewModelScope.launch {
+            userDataRepository.addHiddenGif(gifUrl)
+        }
         _uiState.update { it.copy(gifUrls = it.gifUrls.toMutableList().apply { remove(gifUrl) }) }
+
     }
 
 
 }
+
 
 const val LIMIT_GIFS = 25
 

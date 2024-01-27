@@ -4,20 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.miracle.natifetest.presentation.screens.gifinfo.GifInfoScreen
-import com.miracle.natifetest.presentation.screens.home.HomeScreen
+import com.miracle.natifetest.presentation.screens.gifinfo.gifInfoScreen
+import com.miracle.natifetest.presentation.screens.gifinfo.navigateToGifInfo
 import com.miracle.natifetest.presentation.screens.home.HomeViewModel
+import com.miracle.natifetest.presentation.screens.home.homeNavigationRoute
+import com.miracle.natifetest.presentation.screens.home.homeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +29,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     NatifeTestAppNavHost()
                 }
@@ -43,34 +42,17 @@ class MainActivity : ComponentActivity() {
 fun NatifeTestAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screen.Home.name
+    startDestination: String = homeNavigationRoute
 ) {
-    val vm: HomeViewModel = hiltViewModel()
 
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-
-        composable(Screen.Home.name) {
-            val navigateToGifIngo = { gifIndex: Int ->
-                navController.navigate(Screen.GifInfo.name.addArgs(ARGUMENT_GIF_INDEX, gifIndex.toString()))
-            }
-            HomeScreen(vm = vm, navigateToGifInfo = navigateToGifIngo)
-        }
-
-        composable(
-            Screen.GifInfo.name.addPathArgs(ARGUMENT_GIF_INDEX),
-            arguments = listOf(navArgument(ARGUMENT_GIF_INDEX) { type = NavType.IntType })
-        ) {
-            val gifIndex = it.arguments?.getInt(ARGUMENT_GIF_INDEX) ?: 0
-            GifInfoScreen(vm = vm, gifIndex = gifIndex) {
-                navController.popBackStack()
-            }
-        }
+        homeScreen(navigateToGifInfo = navController::navigateToGifInfo)
+        gifInfoScreen(navigateBack = navController::popBackStack)
     }
-
 }
 
 

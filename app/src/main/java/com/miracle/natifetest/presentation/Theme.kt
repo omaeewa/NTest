@@ -1,10 +1,9 @@
 package com.miracle.natifetest.presentation
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
-import androidx.compose.material.Typography
-import androidx.compose.material.darkColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -18,37 +17,27 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val DarkBlue = Color(36, 40, 50, 203)
 
-private val DarkColorPalette = darkColors(
+private val DarkColorPalette = darkColorScheme(
     primary = Purple200,
-    primaryVariant = Purple700,
     secondary = Teal200
 )
 
 val Typography = Typography(
-    body1 = TextStyle(
+    bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     )
 )
 
-val Shapes = Shapes(
-    small = RoundedCornerShape(4.dp),
-    medium = RoundedCornerShape(4.dp),
-    large = RoundedCornerShape(0.dp)
-)
-
-
 
 @Composable
 fun NatifeTestTheme(content: @Composable () -> Unit) {
     val colors =  DarkColorPalette
 
-
     MaterialTheme(
-        colors = colors,
+        colorScheme = colors,
         typography = Typography,
-        shapes = Shapes,
         content = content
     )
 }

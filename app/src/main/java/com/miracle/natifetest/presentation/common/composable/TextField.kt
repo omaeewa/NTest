@@ -5,12 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +42,7 @@ fun SearchEditText(word: String, isLoading: Boolean, onValueChange: (w: String) 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
-                backgroundColor = DarkBlue,
+                colors = CardDefaults.cardColors(containerColor = DarkBlue)
             ) {
                 Row(modifier = Modifier.padding(10.dp)) {
                     Image(
