@@ -8,14 +8,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.miracle.natifetest.presentation.screens.gifinfo.gifInfoScreen
 import com.miracle.natifetest.presentation.screens.gifinfo.navigateToGifInfo
-import com.miracle.natifetest.presentation.screens.home.HomeViewModel
-import com.miracle.natifetest.presentation.screens.home.homeNavigationRoute
+import com.miracle.natifetest.presentation.screens.home.HomeRoute
 import com.miracle.natifetest.presentation.screens.home.homeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,7 +40,7 @@ class MainActivity : ComponentActivity() {
 fun NatifeTestAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = homeNavigationRoute
+    startDestination: Any = HomeRoute
 ) {
 
     NavHost(

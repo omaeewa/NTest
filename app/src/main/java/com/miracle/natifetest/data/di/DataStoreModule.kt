@@ -8,6 +8,7 @@ import com.miracle.natifetest.UserPreferencesProto
 import com.miracle.natifetest.data.datastore.UserPreferencesSerializer
 import com.miracle.natifetest.data.repository.UserDataRepositoryImpl
 import com.miracle.natifetest.domain.repository.UserDataRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,20 +18,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
+interface DataStoreBindModule {
 
-    @Provides
-    @Singleton
-    fun providesUserPreferencesDataStore(
-        @ApplicationContext context: Context,
-        userPreferencesSerializer: UserPreferencesSerializer,
-    ): DataStore<UserPreferencesProto> =
-        DataStoreFactory.create(serializer = userPreferencesSerializer) {
-            context.dataStoreFile("user_preferences.pb")
-        }
+    @Binds
+    fun provideDataStoreRepository(userDataRepositoryImpl: UserDataRepositoryImpl): UserDataRepository
 
-    @Singleton
-    @Provides
-    fun provideDataStoreRepository(dataSource: DataStore<UserPreferencesProto>): UserDataRepository =
-        UserDataRepositoryImpl(dataSource)
+    companion object {
+        @Provides
+        @Singleton
+        fun providesUserPreferencesDataStore(
+            @ApplicationContext context: Context,
+            userPreferencesSerializer: UserPreferencesSerializer,
+        ): DataStore<UserPreferencesProto> =
+            DataStoreFactory.create(serializer = userPreferencesSerializer) {
+                context.dataStoreFile("user_preferences.pb")
+            }
+    }
 }

@@ -1,8 +1,16 @@
 package com.miracle.natifetest.presentation.screens.home
 
 import android.util.Log
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -12,9 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,24 +37,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.miracle.natifetest.presentation.common.composable.SearchEditText
 import com.miracle.natifetest.R
+import com.miracle.natifetest.presentation.common.composable.SearchEditText
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeScreen(
     navigateToGifInfo: (gifIndex: Int) -> Unit
 ) {
     val vm: HomeViewModel = hiltViewModel()
-    val uiState by vm.uiState.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(uiState) {
-        Log.d("kek", "HomeScreen: ${uiState.gifUrls.size}")
-        Log.d("kek", "HomeScreen: ${vm.hashCode()}")
-    }
+    val listViewType by vm.listViewType.collectAsState()
+    val searchString by vm.searchString.collectAsState()
+    val gifs by vm.gifUrls.collectAsState(emptyList())
+    val isLoading by vm.isLoading.collectAsState(false)
 
     Column {
         Row(
@@ -56,17 +63,17 @@ fun HomeScreen(
         ) {
             Box(Modifier.weight(1f)) {
                 SearchEditText(
-                    word = uiState.searchString,
-                    isLoading = uiState.loading,
+                    word = searchString,
+                    isLoading = isLoading,
                     onValueChange = vm::onSearchStringUpdate
                 )
             }
-            if (uiState.gifUrls.isNotEmpty())
+            if (gifs.isNotEmpty())
                 IconButton(
                     onClick = vm::updateListViewType,
                     modifier = Modifier.padding(end = 10.dp)
                 ) {
-                    val icon = when (uiState.listViewType) {
+                    val icon = when (listViewType) {
                         ListViewType.Table -> R.drawable.ic_table_rows
                         ListViewType.Column -> R.drawable.ic_table_chart
                     }
@@ -77,72 +84,42 @@ fun HomeScreen(
                 }
         }
 
-        when (uiState.listViewType) {
+        when (listViewType) {
             ListViewType.Table -> {
                 val state = rememberLazyGridState()
                 LazyVerticalGrid(
                     state = state,
                     columns = GridCells.Fixed(3),
                 ) {
-                    items(uiState.gifUrls.size) {
-                        if (it == uiState.gifUrls.size - 10) vm.loadMoreGifs()
-
-                        GlideImage(
-                            model = uiState.gifUrls[it],
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .padding(5.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .clickable {
-                                    navigateToGifInfo(it)
-                                },
-                            contentScale = ContentScale.Crop
-                        ) { builder ->
-
-                            builder.placeholder(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_gif
-                                )
-                            )
+                    items(gifs.size) {
+                        LaunchedEffect(Unit) {
+                            if (it == gifs.size - 10) vm.loadMoreGifs()
                         }
 
+                        GifImage(model = gifs[it], onClick = { navigateToGifInfo(it) })
                     }
 
 
                 }
             }
+
             ListViewType.Column -> {
                 val state = rememberLazyListState()
                 LazyColumn(state = state) {
-                    items(uiState.gifUrls.size) {
-                        if (it == uiState.gifUrls.size - 1) vm.fetchGifs()
-
-                        GlideImage(
-                            model = uiState.gifUrls[it],
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .clickable { navigateToGifInfo(it) },
-                            contentScale = ContentScale.FillWidth
-                        ) { builder ->
-                            builder.placeholder(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_gif
-                                )
-                            )
+                    items(gifs.size) {
+                        LaunchedEffect(Unit) {
+                            if (it == gifs.size - 10) {
+                                vm.loadMoreGifs()
+                            }
                         }
+
+                        GifImage(model = gifs[it], onClick = { navigateToGifInfo(it) })
                     }
                 }
             }
         }
 
-        if (uiState.gifUrls.isEmpty() && !uiState.loading)
+        if (gifs.isEmpty() && !isLoading)
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -166,5 +143,29 @@ fun HomeScreen(
 
             }
     }
+
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun GifImage(modifier: Modifier = Modifier, model: Any, onClick: () -> Unit = {}) {
+    val context = LocalContext.current
+    GlideImage(
+        model = model,
+        contentDescription = null,
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .padding(5.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick),
+        contentScale = ContentScale.Crop
+    ) { builder ->
+        builder.placeholder(
+            ContextCompat.getDrawable(
+                context,
+                R.drawable.ic_gif
+            )
+        )
+    }
+}
